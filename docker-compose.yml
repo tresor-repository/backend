@@ -1,0 +1,12 @@
+version : '3'
+services: 
+  tresorBackend:
+    image: 'node'
+    volumes: 
+      - '.:/home/node/app/'
+    ports: 
+      - '3000:3000'
+    working_dir : '/home/node/app'
+    stdin_open : true
+    tty: true
+    container_name : 'tresor_backend'
