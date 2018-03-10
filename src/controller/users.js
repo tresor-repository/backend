@@ -10,10 +10,10 @@ export default {
                 .trim()
                 .normalizeEmail()
                 .custom(value => {
-                    return User.findOne({ email: value }).then( user => {
-                        if (user) { 
+                    return User.findOne({ email: value }).then(user => {
+                        if (user) {
                             console.log("test here");
-                            throw new Error("email sudah terdaftar"); 
+                            throw new Error("email sudah terdaftar");
                         }
                         return true;
                     })
