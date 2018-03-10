@@ -8,7 +8,16 @@ export default {
                 .exists().withMessage('email tidak ada')
                 .isEmail().withMessage('email tidak berbentuk email')
                 .trim()
-                .normalizeEmail(),
+                .normalizeEmail()
+                .custom(value => {
+                    return User.findOne({ email: value }).then( user => {
+                        if (user) { 
+                            console.log("test here");
+                            throw new Error("email sudah terdaftar"); 
+                        }
+                        return true;
+                    })
+                }),
             check('password')
                 .exists().withMessage('password tidak ada')
                 .custom(value => {
@@ -22,7 +31,7 @@ export default {
         handle: (req, res, next) => {
             const user = new User({
                 email: req.body.email,
-                password : req.body.password
+                password: req.body.password
             });
             user.save((err => {
                 if (err) return next(err);
