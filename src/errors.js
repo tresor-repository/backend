@@ -23,7 +23,7 @@ export class ValidationError extends HttpError {
 
 export function errorMiddleware(err, req, res, next) {
     res.status(
-        err.code ? err.code : httpErrorCode
+        (err.code && err.code < 599) ? err.code : httpErrorCode
     ).json(
         err.error ? err.error : httpErrorMsg
     );

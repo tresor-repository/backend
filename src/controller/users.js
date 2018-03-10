@@ -1,4 +1,5 @@
 import { check } from 'express-validator/check';
+import User from '../model/User';
 
 export default {
     create: {
@@ -19,7 +20,14 @@ export default {
                 })
         ],
         handle: (req, res, next) => {
-            res.send(req.body.email);
+            const user = new User({
+                email: req.body.email,
+                password : req.body.password
+            });
+            user.save((err => {
+                if (err) return next(err);
+                res.status(204).send();
+            }))
         }
     },
 }
