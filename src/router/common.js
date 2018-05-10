@@ -12,11 +12,5 @@ export default {
             }
             next();
         }];
-    },
-    session: (req, res, next) => {
-            const authorization = req.get('Authorization');
-            const result = session.verify(authorization);
-            console.log(result);
-            res.status(200).send({"result":"ok"}); 
     }
 }

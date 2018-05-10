@@ -1,13 +1,20 @@
 import jwt from 'jsonwebtoken';
 import config from '../config.json';
+import User from './User'
 
 export default {
-        create: (req, res, next) => {
-                const token = jwt.sign({userId: 5}, config.sessionkey);
-                console.log(token);
-                res.status(200).send({"session":token});
-        },
-        verify: (token) => jwt.verify(token, config.sessionkey)
-                
+    create: data => {
+        return User.findOne({
+                email: data.email
+            })
+            .exec()
+            .then((err, user) => {
+                if (err) throw err;
+                if (!user) throw new Error("User not found");
+                console.log(err);
+                console.log(user);
+            })
+    },
+    verify: (token) => jwt.verify(token, config.sessionkey)
+
 }
-            
