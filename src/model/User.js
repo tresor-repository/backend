@@ -33,7 +33,7 @@ userSchema.methods.comparePassword = function comparePassword(candidatePassword)
         bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
             if (err) reject(err);
             if (isMatch) {
-                fullfill(isMatch);
+                fullfill(this);
             } else {
                 reject(new Error("Wrong Password"));
             }

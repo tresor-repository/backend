@@ -14,6 +14,9 @@ export default {
                 return user;
             })
             .then(user => user.comparePassword(data.password))
+            .then(user => jwt.sign({
+                email: user.email
+            }, config.sessionkey))
     },
     verify: token => jwt.verify(token, config.sessionkey),
 };

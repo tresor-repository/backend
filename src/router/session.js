@@ -23,6 +23,7 @@ export default {
                     "session": token
                 })
             ).catch(err => {
+                console.log(err);
                 next(new ValidationError(
                     [{
                         param: "username",
