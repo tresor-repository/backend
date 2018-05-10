@@ -4,17 +4,16 @@ import User from './User'
 
 export default {
     create: data => {
+        console.log(data.email);
         return User.findOne({
                 email: data.email
             })
-            .exec()
-            .then((err, user) => {
+            .then((user, err) => {
                 if (err) throw err;
-                if (!user) throw new Error("User not found");
-                console.log(err);
-                console.log(user);
+                if (user === undefined) throw new Error("User not found");
+                return user;
             })
+            .then(user => user.comparePassword(data.password))
     },
-    verify: (token) => jwt.verify(token, config.sessionkey)
-
-}
+    verify: token => jwt.verify(token, config.sessionkey),
+};
