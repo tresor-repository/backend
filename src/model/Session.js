@@ -20,7 +20,8 @@ export default {
     },
     verify: (token) => new Promise((resolve, reject) => {
         try {
-            resolve(jwt.verify(token, config.sessionkey))
+            const user = jwt.verify(token, config.sessionkey);
+            resolve(user);
         } catch (err) {
             reject(err)
         }
