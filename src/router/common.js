@@ -1,7 +1,6 @@
 import express from 'express';
 import { validationResult } from 'express-validator/check';
 import { ValidationError} from '../errors';
-import session from '../model/session';
 
 export default {
     validator: (array) => {
