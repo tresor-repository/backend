@@ -3,8 +3,11 @@ import {
 } from 'express-validator/check';
 import Session from '../model/Session';
 import {
-    ValidationError
+    UnauthorizedError
 } from '../errors';
+import {
+    createVerify
+} from 'crypto';
 
 export default {
     create: {
@@ -34,7 +37,8 @@ export default {
         }
     },
     middleware: (req, res, next) => {
-        console.log("halo" + req.get('x-access-token'));
-        next();
+        Session.verify(req.get('x-access-token'))
+            .then(() => next())
+            .catch(err => next(new UnauthorizedError()));
     }
 }

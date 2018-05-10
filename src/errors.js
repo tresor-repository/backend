@@ -1,5 +1,7 @@
 const httpErrorCode = 500;
-const httpErrorMsg = { message: "Error Unkown" }
+const httpErrorMsg = {
+    message: "Error Unkown"
+}
 class HttpError extends Error {
     constructor() {
         super();
@@ -18,6 +20,16 @@ export class ValidationError extends HttpError {
                 message: it.msg
             }
         })
+    }
+}
+
+export class UnauthorizedError extends HttpError {
+    constructor() {
+        super();
+        this.code = 401;
+        this.error = {
+            message: "Unauthorized Error"
+        };
     }
 }
 

@@ -18,5 +18,11 @@ export default {
                 email: user.email
             }, config.sessionkey))
     },
-    verify: token => jwt.verify(token, config.sessionkey),
+    verify: (token) => new Promise((resolve, reject) => {
+        try {
+            resolve(jwt.verify(token, config.sessionkey))
+        } catch (err) {
+            reject(err)
+        }
+    }),
 };
