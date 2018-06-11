@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
     check
 } from 'express-validator/check';
@@ -16,33 +17,39 @@ export default {
             .trim()
         ],
         handle: (req, res, next) => {
-            const spending = new Spending({
-                amount: req.body.amount,
-                userId: req.userId,
-                tags: req.body.tags,
-                info: req.body.info,
-                category: req.body.category,
-                date: req.body.date
-            })
-            spending.save(err => {
+            new Spending(_.assign({},
+                req.body, {
+                    userId: req.userId
+                }
+            )).save(err => {
                 if (err) return next(err);
-                res.status(201).send();
+                res.status(201).send(sendSpending(spending));
             })
         }
     },
     get: (req, res, next) => {
-        Spending.findById(req.params.spendingId).then(spending => {
-            if (!spending) return next(new NotFoundError());
-            if (spending.userId !== req.userId) return next(new UnauthorizedError());
-            res.status(200).send(sendSpending(spending));
-        })
+        Spending.findByIdAndUser(req.params.spendingId, req.userId)
+            .then(spending => res.status(200).send(sendSpending(spending)))
+            .catch(e => next(e));
     },
     remove: (req, res, next) => {
-        Spending.findById(req.params.spendingId).then(spending => {
-            if (!spending) return next(new NotFoundError());
-            if (spending.userId !== req.userId) return next(new UnauthorizedError());
-            spending.remove().then(() => res.status(204).send());
-        })
+        Spending.findByIdAndUser(req.params.spendingId, req.userId)
+            .then(spending => spending
+                .remove()
+                .then(() => res.status(204).send()))
+            .catch(e => next(e));
+    },
+    update: (req, res, next) => {
+        Spending.findByIdAndUser(req.params.spendingId, req.userId)
+            .then(spending =>
+                spending.update(req.body)
+                .then(x => {
+                    console.log(x);
+                    res.status(200).send();
+                })
+            )
+            .catch(e => next(e));
+
     }
 }
 

@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
 import Counter from './Counter';
+import {
+    NotFoundError,
+    UnauthorizedError
+} from "../errors";
 
 const counterSpendingId = 'spendingId';
 
@@ -37,5 +41,13 @@ spendingSchema.pre('save', function (next) {
 })
 
 const Spending = mongoose.model("Spending", spendingSchema);
+
+Spending.findByIdAndUser = function findByIdAndUser(spendingId, userId) {
+    return Spending.findById(spendingId).then(spending => {
+        if (!spending) throw new NotFoundError();
+        if (spending.userId !== userId) throw new UnauthorizedError();
+        return spending;
+    })
+}
 
 export default Spending;
