@@ -49,6 +49,16 @@ export default {
                 )
             )
             .catch(e => next(e));
+    },
+    getList: (req, res, next) => {
+        Spending.find({
+                userId: req.userId
+            })
+            .then(spendings => res.status(200).send({
+                count: spendings.length,
+                data: _.map(spendings, spending => sendSpending(spending))
+            }))
+            .catch(e => next(e));
     }
 }
 

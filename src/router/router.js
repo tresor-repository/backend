@@ -14,5 +14,6 @@ router.post('/spendings', session.middleware, common.validator(spending.post.val
 router.get('/spendings/:spendingId', session.middleware, spending.get)
 router.delete('/spendings/:spendingId', session.middleware, spending.remove)
 router.patch('/spendings/:spendingId', session.middleware, spending.update)
+router.get('/spendings', session.middleware, spending.getList)
 
 export default router;
