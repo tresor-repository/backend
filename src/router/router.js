@@ -10,6 +10,6 @@ router.get('/', (req, res) => res.send({serverTime : new Date()}));
 router.post('/users/', common.validator(users.create.validation), users.create.handle);
 router.post('/session/', common.validator(session.create.validation), session.create.handle);
 router.get('/me/', session.middleware, users.get)
-router.post('/spendings', session.middleware, spending.post)
+router.post('/spendings', session.middleware, common.validator(spending.post.validation), spending.post.handle)
 
 export default router;
