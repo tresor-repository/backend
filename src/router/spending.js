@@ -42,14 +42,13 @@ export default {
     update: (req, res, next) => {
         Spending.findByIdAndUser(req.params.spendingId, req.userId)
             .then(spending =>
-                spending.update(req.body)
-                .then(x => {
-                    console.log(x);
-                    res.status(200).send();
-                })
+                spending.update(req.body).execAsync()
+                .then(() =>
+                    Spending.findById(req.params.spendingId)
+                    .then(spending => res.status(200).send(sendSpending(spending)))
+                )
             )
             .catch(e => next(e));
-
     }
 }
 
