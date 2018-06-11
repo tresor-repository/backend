@@ -21,7 +21,7 @@ export default {
                 req.body, {
                     userId: req.userId
                 }
-            )).save(err, spending => {
+            )).save(function(err, spending) {
                 if (err) return next(err);
                 res.status(201).send(sendSpending(spending));
             })
