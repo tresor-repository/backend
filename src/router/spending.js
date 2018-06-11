@@ -2,6 +2,10 @@ import {
     check
 } from 'express-validator/check';
 import Spending from '../model/Spending';
+import {
+    NotFoundError,
+    UnauthorizedError
+} from '../errors';
 
 export default {
     post: {
@@ -25,5 +29,24 @@ export default {
                 res.status(201).send();
             })
         }
+    },
+    get: (req, res, next) => {
+        Spending.findById(req.params.spendingId).then(spending => {
+            if (!spending) return next(new NotFoundError());
+            if (spending.userId !== req.userId) return next(new UnauthorizedError());
+            res.status(200).send(sendSpending(spending));
+
+        })
+    }
+}
+
+function sendSpending(data) {
+    return {
+        id: data._id,
+        amount: data.amount,
+        tags: data.tags,
+        date: data.date,
+        info: data.info,
+        category: data.category
     }
 }

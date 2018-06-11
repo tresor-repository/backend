@@ -33,6 +33,16 @@ export class UnauthorizedError extends HttpError {
     }
 }
 
+export class NotFoundError extends HttpError {
+    constructor() {
+        super();
+        this.code = 404,
+            this.error = {
+                message: "Not Found Error"
+            }
+    }
+}
+
 export function errorMiddleware(err, req, res, next) {
     console.log(err);
     res.status(
