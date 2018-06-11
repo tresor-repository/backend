@@ -35,7 +35,13 @@ export default {
             if (!spending) return next(new NotFoundError());
             if (spending.userId !== req.userId) return next(new UnauthorizedError());
             res.status(200).send(sendSpending(spending));
-
+        })
+    },
+    remove: (req, res, next) => {
+        Spending.findById(req.params.spendingId).then(spending => {
+            if (!spending) return next(new NotFoundError());
+            if (spending.userId !== req.userId) return next(new UnauthorizedError());
+            spending.remove().then(() => res.status(204).send());
         })
     }
 }
