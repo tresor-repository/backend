@@ -1,6 +1,7 @@
 import {
     check
 } from 'express-validator/check';
+import Spending from '../model/Spending';
 
 export default {
     post: {
@@ -11,9 +12,18 @@ export default {
             .trim()
         ],
         handle: (req, res, next) => {
-            console.log(req.body.tags[0])
-            
-            res.status(201).send();
+            const spending = new Spending({
+                amount: req.body.amount,
+                userId: req.userId,
+                tags: req.body.tags,
+                info: req.body.info,
+                category: req.body.category,
+                date: req.body.date
+            })
+            spending.save(err => {
+                if (err) return next(err);
+                res.status(201).send();
+            })
         }
     }
 }

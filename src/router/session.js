@@ -39,7 +39,7 @@ export default {
     middleware: (req, res, next) => {
         Session.verify(req.get('x-access-token'))
             .then(user => {
-                req.email = user.email;
+                req.userId = user.userId;
                 next()
             })
             .catch(err => {
