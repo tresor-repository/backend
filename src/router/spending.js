@@ -18,15 +18,25 @@ export default {
         .trim()
         .customSanitizer(value => moment(value, 'DD-MM-YYYY'))
     ],
-    post: (req, res, next) => {
-        new Spending(_.assign({},
-            req.body, {
-                userId: req.userId
-            }
-        )).save(function (err, spending) {
-            if (err) return next(err);
-            res.status(201).send(sendSpending(spending));
-        })
+    post: {
+        validation: [
+            check('amount')
+            .exists().withMessage('tidak ada'),
+            check('date')
+            .exists().withMessage('tidak ada'),
+            check('category')
+            .exists().withMessage('tidak ada')
+        ],
+        handle: (req, res, next) => {
+            new Spending(_.assign({},
+                req.body, {
+                    userId: req.userId
+                }
+            )).save(function (err, spending) {
+                if (err) return next(err);
+                res.status(201).send(sendSpending(spending));
+            })
+        }
     },
     get: (req, res, next) => {
         Spending.findByIdAndUser(req.params.spendingId, req.userId)

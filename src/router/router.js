@@ -6,14 +6,16 @@ import session from './session';
 
 const router = express.Router();
 
-router.get('/', (req, res) => res.send({serverTime : new Date()}));
+router.get('/', (req, res) => res.send({
+    serverTime: new Date()
+}));
 router.post('/users/', common.validator(users.create.validation), users.create.handle);
 router.post('/session/', common.validator(session.create.validation), session.create.handle);
 router.get('/me/', session.middleware, users.get)
-router.post('/spendings', session.middleware, common.validator(spending.validation), spending.post)
+router.post('/spendings', session.middleware, common.validator(spending.post.validation), common.validator(spending.validation), spending.post.handle)
 router.get('/spendings/:spendingId', session.middleware, spending.get)
 router.delete('/spendings/:spendingId', session.middleware, spending.remove)
-router.patch('/spendings/:spendingId', session.middleware, spending.update)
+router.patch('/spendings/:spendingId', session.middleware, common.validator(spending.validation), spending.update)
 router.get('/spendings', session.middleware, spending.getList)
 
 export default router;
