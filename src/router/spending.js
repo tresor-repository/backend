@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import DateHelper from '../helper/date';
 import {
     check
 } from 'express-validator/check';
@@ -16,7 +17,7 @@ export default {
         .trim(),
         check('date')
         .trim()
-        .customSanitizer(value => toDate(value))
+        .customSanitizer(value => DateHelper.toDate(value))
     ],
     post: {
         validation: [
@@ -74,9 +75,9 @@ export default {
     getPerDays: {
         validation: [
             check('dateStart')
-            .customSanitizer(value => toDate(value)),
+            .customSanitizer(value => DateHelper.toDate(value)),
             check('dateEnd')
-            .customSanitizer(value => toDate(value))
+            .customSanitizer(value => DateHelper.toDate(value))
             .custom((value, {
                 req
             }) => {
@@ -101,7 +102,7 @@ export default {
                     .groupBy('date')
                     .toPairs()
                     .map(value => _.assign({}, {
-                        date: toFormattedDateString(value[0]),
+                        date: DateHelper.toString(value[0]),
                         count: value[1].length,
                         amount: _.reduce(value[1], (sum, item) => sum += item.amount, 0)
                     }))
@@ -118,17 +119,9 @@ function sendSpending(data) {
         id: data._id,
         amount: data.amount,
         tags: data.tags,
-        date: toFormattedDateString(data.date),
+        date: DateHelper.toString(data.date),
         info: data.info,
         category: data.category
     }
 }
 
-function toFormattedDateString(date) {
-    return moment(date).format('DD-MM-YYYY');
-
-}
-
-function toDate(string) {
-    return moment(string, 'DD-MM-YYY')
-}
