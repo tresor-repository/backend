@@ -5,8 +5,10 @@ export default {
     get: {
         validation: [],
         handle: (req, res, next) => {
+            const query = RegExp(req.query.q, 'i');
             Spending.find({
-                    userId: req.userId
+                    userId: req.userId,
+                    tags: query
                 })
                 .then(spendings =>
                     _.chain(spendings)
@@ -18,6 +20,7 @@ export default {
                             })
                         )
                     )
+                    .filter(value => query.test(value.tag))
                     .groupBy('tag')
                     .toPairs()
                     .map(value => _.assign({}, {
