@@ -3,6 +3,7 @@ import common from './common';
 import users from './user';
 import spending from './spending';
 import session from './session';
+import tag from './tag';
 
 const router = express.Router();
 
@@ -18,4 +19,5 @@ router.get('/spendings/:spendingId', session.middleware, spending.get)
 router.delete('/spendings/:spendingId', session.middleware, spending.remove)
 router.patch('/spendings/:spendingId', session.middleware, common.validator(spending.validation), spending.update)
 router.get('/spendings', session.middleware, spending.getList)
+router.get('/tags', session.middleware, tag.get.handle);
 export default router;
