@@ -4,6 +4,7 @@ import users from './user';
 import spending from './spending';
 import session from './session';
 import tag from './tag';
+import datehelper from '../helper/date';
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router.post('/users/', common.validator(users.create.validation), users.create.h
 router.post('/session/', common.validator(session.create.validation), session.create.handle);
 router.get('/me/', session.middleware, users.get)
 router.post('/spendings', session.middleware, common.validator(spending.post.validation), common.validator(spending.validation), spending.post.handle)
-router.get('/spendings/days', session.middleware, common.validator(spending.getPerDays.validation), spending.getPerDays.handle)
+router.get('/spendings/days', session.middleware, datehelper.validateStartEnd, spending.getPerDays)
 router.get('/spendings/:spendingId', session.middleware, spending.get)
 router.delete('/spendings/:spendingId', session.middleware, spending.remove)
 router.patch('/spendings/:spendingId', session.middleware, common.validator(spending.validation), spending.update)

@@ -72,45 +72,29 @@ export default {
             }))
             .catch(e => next(e));
     },
-    getPerDays: {
-        validation: [
-            check('dateStart')
-            .customSanitizer(value => DateHelper.toDate(value)),
-            check('dateEnd')
-            .customSanitizer(value => DateHelper.toDate(value))
-            .custom((value, {
-                req
-            }) => {
-                if (value && req.query.dateStart && value.isBefore(req.query.dateStart)) {
-                    throw new Error('dateEnd before dateStart');
+    getPerDays: (req, res, next) => {
+        console.log(req.dateStart);
+        console.log(req.dateEnd);
+        Spending.find({
+                userId: req.userId,
+                date: {
+                    '$gte': req.dateStart,
+                    '$lte': req.dateEnd
                 }
-                return true;
             })
-        ],
-        handle: (req, res, next) => {
-            const dateEnd = req.query.dateEnd ? req.query.dateEnd : req.query.dateStart ? req.query.dateStart.clone().add(5, 'days') : moment();
-            const dateStart = req.query.dateStart ? req.query.dateStart : req.query.dateEnd.clone().subtract(5, 'days');
-            Spending.find({
-                    userId: req.userId,
-                    date: {
-                        '$gte': dateStart,
-                        '$lte': dateEnd
-                    }
-                })
-                .then(spendings =>
-                    _.chain(spendings)
-                    .groupBy('date')
-                    .toPairs()
-                    .map(value => _.assign({}, {
-                        date: DateHelper.toString(value[0]),
-                        count: value[1].length,
-                        amount: _.reduce(value[1], (sum, item) => sum += item.amount, 0)
-                    }))
-                )
-                .then(result => res.status(200).send(result))
-                .catch(e => next(e));
+            .then(spendings =>
+                _.chain(spendings)
+                .groupBy('date')
+                .toPairs()
+                .map(value => _.assign({}, {
+                    date: DateHelper.toString(value[0]),
+                    count: value[1].length,
+                    amount: _.reduce(value[1], (sum, item) => sum += item.amount, 0)
+                }))
+            )
+            .then(result => res.status(200).send(result))
+            .catch(e => next(e));
 
-        }
     }
 }
 
@@ -124,4 +108,3 @@ function sendSpending(data) {
         category: data.category
     }
 }
-
