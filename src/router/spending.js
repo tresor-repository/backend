@@ -3,29 +3,30 @@ import {
     check
 } from 'express-validator/check';
 import Spending from '../model/Spending';
+import moment from 'moment';
 import {
     NotFoundError,
     UnauthorizedError
 } from '../errors';
 
 export default {
-    post: {
-        validation: [
-            check('amount')
-            .exists().withMessage('tidak ada')
-            .isNumeric().withMessage('tidak berupa angka')
-            .trim()
-        ],
-        handle: (req, res, next) => {
-            new Spending(_.assign({},
-                req.body, {
-                    userId: req.userId
-                }
-            )).save(function(err, spending) {
-                if (err) return next(err);
-                res.status(201).send(sendSpending(spending));
-            })
-        }
+    validation: [
+        check('amount')
+        .isNumeric().withMessage('tidak berupa angka')
+        .trim(),
+        check('date')
+        .trim()
+        .customSanitizer(value => moment(value, 'DD-MM-YYYY'))
+    ],
+    post: (req, res, next) => {
+        new Spending(_.assign({},
+            req.body, {
+                userId: req.userId
+            }
+        )).save(function (err, spending) {
+            if (err) return next(err);
+            res.status(201).send(sendSpending(spending));
+        })
     },
     get: (req, res, next) => {
         Spending.findByIdAndUser(req.params.spendingId, req.userId)
@@ -67,7 +68,7 @@ function sendSpending(data) {
         id: data._id,
         amount: data.amount,
         tags: data.tags,
-        date: data.date,
+        date: moment(data.date).format('DD-MM-YYYY'),
         info: data.info,
         category: data.category
     }
