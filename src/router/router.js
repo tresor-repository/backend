@@ -20,5 +20,5 @@ router.get('/spendings/:spendingId', session.middleware, spending.get)
 router.delete('/spendings/:spendingId', session.middleware, spending.remove)
 router.patch('/spendings/:spendingId', session.middleware, common.validator(spending.validation), spending.update)
 router.get('/spendings', session.middleware, spending.getList)
-router.get('/tags', session.middleware, tag.get.handle);
+router.get('/tags', session.middleware, datehelper.validateStartEnd, tag.get.handle);
 export default router;
