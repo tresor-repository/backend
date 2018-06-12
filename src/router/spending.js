@@ -77,10 +77,24 @@ export default {
             .customSanitizer(value => toDate(value)),
             check('dateEnd')
             .customSanitizer(value => toDate(value))
+            .custom((value, {
+                req
+            }) => {
+                if (value && req.query.dateStart && value.isBefore(req.query.dateStart)) {
+                    throw new Error('dateEnd before dateStart');
+                }
+                return true;
+            })
         ],
         handle: (req, res, next) => {
+            const dateEnd = req.query.dateEnd ? req.query.dateEnd : req.query.dateStart ? req.query.dateStart.clone().add(5, 'days') : moment();
+            const dateStart = req.query.dateStart ? req.query.dateStart : req.query.dateEnd.clone().subtract(5, 'days');
             Spending.find({
-                    userId: req.userId
+                    userId: req.userId,
+                    date: {
+                        '$gte': dateStart,
+                        '$lte': dateEnd
+                    }
                 })
                 .then(spendings =>
                     _.chain(spendings)
